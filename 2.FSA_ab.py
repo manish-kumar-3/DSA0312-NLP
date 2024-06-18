@@ -1,41 +1,36 @@
-class StateMachine:
-    def __init__(self):
-        self.current_state = 'start'
 
-    def transition(self, input_char):
-        if self.current_state == 'start':
-            if input_char == 'a':
-                self.current_state = 'a_seen'
-            else:
-                self.current_state = 'start'
-        elif self.current_state == 'a_seen':
-            if input_char == 'b':
-                self.current_state = 'ab_seen'
-            elif input_char == 'a':
-                self.current_state = 'a_seen'
-            else:
-                self.current_state = 'start'
-        elif self.current_state == 'ab_seen':
-            if input_char == 'a':
-                self.current_state = 'a_seen'
-            else:
-                self.current_state = 'start'
+def create_automaton():
+    """Creates the automaton's states and transitions."""
+    return {
+        "q0": {"a": "q1", "b": "q0"},
+        "q1": {"a": "q0", "b": "q2"},
+        "q2": {"a": "q0", "b": "q2"}  # Accept state for strings ending with 'ab'
+    }, "q0", ["q2"]  # Pack states, start_state, accepting_states
 
-    def is_accepted(self):
-        return self.current_state == 'ab_seen'
-
-
-def match_string(input_string):
-    fsm = StateMachine()
+def process_input(automaton, input_string):
+    """Processes the input string through the automaton."""
+    states, start_state, accepting_states = automaton
+    current_state = start_state
     for char in input_string:
-        fsm.transition(char)
-    return fsm.is_accepted()
+        if char not in states[current_state]:
+            return "Invalid input character: {}".format(char)
+        current_state = states[current_state][char]
 
+    return "Accepted" if current_state in accepting_states else "Rejected"
 
 def main():
-    input_string = input("Enter a string: ")
-    print(f"String: {input_string}, Accepted: {match_string(input_string)}")
+    states, start_state, accepting_states = create_automaton()
+    while True:
+        input_string = input("Enter a string (or 'q' to quit): ")
+        if input_string.lower() == 'q':
+            break
+        result = process_input(automaton=(states, start_state, accepting_states), input_string=input_string)
+        print(result)
 
+        # Add y/n option for another run
+        run_again = input("Run again? (y/N): ")
+        if run_again.lower() != 'y':
+            break
 
 if __name__ == "__main__":
     main()
