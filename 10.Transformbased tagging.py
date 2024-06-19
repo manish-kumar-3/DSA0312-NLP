@@ -1,5 +1,6 @@
 
 import nltk
+nltk.download("punkt")
 
 # Define transformation rules
 transformation_rules = {
@@ -10,8 +11,6 @@ transformation_rules = {
 
 # Get input text from user
 text = input("Enter a sentence: ")
-
-# Tokenize the input text into words
 words = nltk.word_tokenize(text)
 
 # Initialize a list to store the tagged words
